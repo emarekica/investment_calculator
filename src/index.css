@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,100;0,300&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin-top: 120px;
+  font-family: "Alegreya Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: radial-gradient(#4F6373, #14212B);
+  color: #D9D7AC;
+  min-height: 100vh;
+}
+
+h1 {
+  text-align: center;
+  margin: 3rem auto;
+  font-size: 2rem;
+}
+
+#user-input {
+  padding: 1.5rem;
+  max-width: 30rem;
+  margin: 2rem auto;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #8F8164, #87847e);
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1.5rem;
+  margin: 1em;
+}
+
+#user-input label {
+  display: inline;
+  font-family: "Alegreya Sans", sans-serif;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  width: 430px;
+}
+
+#user-input input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #D9D7AC;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  color: #D9D7AC;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+#result {
+  max-width: 50rem;
+  margin: 2rem auto;
+  padding: 1rem;
+  table-layout: fixed;
+  border-spacing: 1rem;
+  text-align: right;
+}
+
+#result thead {
+  font-size: 1rem;
+  color: #a8afb5;
+}
+
+#result tbody {
+  font-family: "Alegreya Sans", sans-serif;
+  font-size: 1rem;
+  color: #D9D7AC;
+}
+
+.center {
+  text-align: center;
+}
