@@ -5,12 +5,14 @@ import App from "./App";
 
 describe("App component", () => {
   let container;
+  let user;
 
   beforeEach(() => {
-    render(<App />);
-
     const rendered = render(<App />);
     container = rendered.container;
+
+    // create a userEvent instance
+    user = userEvent.setup();
   });
 
   test("renders Header component", () => {
@@ -23,47 +25,57 @@ describe("App component", () => {
     expect(input).toBeInTheDocument();
   });
 
-  test("shows validation message when duration < 1", () => {
-    // TEST INTENT:
-    // - Conditional rendering: if userInput.duration < 1 (or empty)
-    //   the validation <p> should be displayed.
-    // - Ensures user is warned of invalid input.
-    // - Integration test: combines App + UserInput + conditional rendering.
-  });
-
-  test("hides validation message when duration >= 1", () => {
-    // TEST INTENT:
-    // - Conditional rendering: validation message disappears
-    //   when duration input becomes valid (>= 1).
-    // - Tests dynamic state updates and conditional rendering.
-    // - Integration test: App-level logic, not Results internals.
-  });
-
-  test("renders Results component when duration >= 1", () => {
-    // TEST INTENT:
-    // - When input is valid, Results component should appear.
-    // - Confirms main success path is reachable.
-    // - Integration test: App-level behavior only.
+  test("shows validation message when duration < 1 on initial render", () => {
+    expect(
+      screen.getByText(/please enter duration greater than 0/i)
+    ).toBeInTheDocument();
   });
 
   test("does not render Results component when duration < 1", () => {
-    // TEST INTENT:
-    // - Ensures Results is NOT shown if input is invalid.
-    // - Protects against accidental rendering before input validation.
+    expect(screen.queryByRole("table", { name: /result/i })).toBeNull();
+  });
+
+  test("renders Results component when duration >= 1", async () => {
+    const durationInput = screen.getByLabelText(/duration/i);
+
+    await user.type(durationInput, "5");
+
+    // Validation message should disappear
+    expect(
+      screen.queryByText(/please enter duration greater than 0/i)
+    ).toBeNull();
   });
 
   test("updates state correctly when user types in inputs", async () => {
-    // TEST INTENT:
-    // - Simulate typing into initialInvestment, annualInvestment, expectedReturn, and duration fields.
-    // - Verify App-level state is updated correctly via handleUserInput.
-    // - Ensures numeric conversion (+newValue) works as intended.
-    // - Integration test of App + UserInput behavior.
+    const initialInput = screen.getByLabelText(/initial investment/i);
+    const annualInput = screen.getByLabelText(/annual investment/i);
+    const returnInput = screen.getByLabelText(/expected return/i);
+    const durationInput = screen.getByLabelText(/duration/i);
+
+    await user.type(initialInput, "1000");
+    await user.type(annualInput, "100");
+    await user.type(returnInput, "5");
+    await user.type(durationInput, "2");
+
+    expect(screen.getByRole("table", { id: /result/i })).toBeInTheDocument();
   });
 
-  test("switches between validation message and Results dynamically", async () => {
-    // TEST INTENT:
-    // - Covers the dynamic path: user enters invalid duration, then corrects it.
-    // - Ensures validation message disappears and Results appear after valid input.
-    // - Integration test: full App conditional rendering flow.
-  });
+ test("toggles validation message and Results when duration changes", async () => {
+  const durationInput = screen.getByLabelText(/duration/i);
+
+  // Helper to set duration
+  const setDuration = async (value) => {
+    await user.clear(durationInput);
+    await user.type(durationInput, value);
+  };
+
+  // Start invalid → valid → invalid
+  await setDuration("3");
+  expect(screen.queryByText(/please enter duration greater than 0/i)).toBeNull();
+  expect(screen.getByRole("table")).toBeInTheDocument();
+
+  await setDuration("0");
+  expect(screen.getByText(/please enter duration greater than 0/i)).toBeInTheDocument();
+  expect(screen.queryByRole("table")).toBeNull();
+});
 });
